@@ -8,7 +8,7 @@ class Time(models.Model):
     cidade = models.CharField(max_length=100)
     estadio= models.CharField(max_length=100)
     tecnico= models.CharField(max_length=100)
-    data_fundacao= models.DateTimeField()
+    data_fundacao= models.DateField()
 
     def __str__(self):
         return self.nome
