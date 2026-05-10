@@ -1,6 +1,6 @@
 # Sistema de Gerenciamento de Campeonato de Futebol
 
-Projeto feito para aprender Django. A ideia é criar um sistema para gerenciar campeonatos de futebol.
+Projeto backend feito a principio com Django. A ideia é criar um sistema para gerenciar campeonatos de futebol.
 
 Ainda tô no começo, mas a intenção é ter cadastro de times, jogadores, partidas e classificação automática.
 
