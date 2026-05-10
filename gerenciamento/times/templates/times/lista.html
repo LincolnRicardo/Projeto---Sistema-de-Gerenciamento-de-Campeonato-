@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Times</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .card h2 { margin: 0 0 8px; }
+    .card p { margin: 4px 0; color: #555; }
+    a { text-decoration: none; color: #1a73e8; }
+  </style>
+</head>
+<body>
+  <h1>Times de Futebol</h1>
+  {% for time in times %}
+  <div class="card">
+    <h2><a href="{% url 'time-detalhe' time.pk %}">{{ time.nome }}</a></h2>
+    <p>🏙️ {{ time.cidade }}</p>
+    <p>🏟️ {{ time.estadio }}</p>
+  </div>
+  {% empty %}
+  <p>Nenhum time cadastrado.</p>
+  {% endfor %}
+</body>
+</html>

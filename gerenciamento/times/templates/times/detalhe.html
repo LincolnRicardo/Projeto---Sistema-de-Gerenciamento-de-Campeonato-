@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ time.nome }}</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+    .info { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+    .row { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    .label { color: #888; font-size: 14px; }
+    a { color: #1a73e8; }
+  </style>
+</head>
+<body>
+  <a href="{% url 'times-lista' %}">← Voltar</a>
+  <h1>{{ time.nome }}</h1>
+  <div class="info">
+    <div class="row"><span class="label">Cidade</span><span>{{ time.cidade }}</span></div>
+    <div class="row"><span class="label">Estádio</span><span>{{ time.estadio }}</span></div>
+    <div class="row"><span class="label">Técnico</span><span>{{ time.tecnico }}</span></div>
+    <div class="row"><span class="label">Fundação</span><span>{{ time.data_fundacao }}</span></div>
+  </div>
+</body>
+</html>
