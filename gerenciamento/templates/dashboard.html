@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+{% if messages %}
+{% for msg in messages %}
+<div class="bg-green-500/20 border border-green-500/40 text-green-400 px-4 py-3 rounded-lg mb-4 text-sm">
+  ✅ {{ msg }}
+</div>
+{% endfor %}
+{% endif %}
+
+<h1 class="font-display text-4xl text-green-400 mb-6 tracking-wider">⚽ DASHBOARD</h1>
+
+<!-- Abas -->
+<div class="flex gap-2 mb-8 border-b border-gray-800">
+  <button onclick="trocarAba('visao')" id="btn-visao"
+    class="aba-btn px-5 py-2 text-sm font-medium border-b-2 border-green-400 text-green-400 transition">
+    📊 Visão Geral
+  </button>
+  <button onclick="trocarAba('gerenciar')" id="btn-gerenciar"
+    class="aba-btn px-5 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-white transition">
+    ⚙️ Gerenciar
+  </button>
+</div>
+
+<!-- ABA: VISÃO GERAL -->
+<div id="aba-visao">
+
+  <!-- Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 text-center">
+      <div class="text-3xl font-bold text-green-400">{{ total_gols }}</div>
+      <div class="text-gray-500 text-sm mt-1">Gols</div>
+    </div>
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 text-center">
+      <div class="text-3xl font-bold text-blue-400">{{ total_partidas }}</div>
+      <div class="text-gray-500 text-sm mt-1">Partidas</div>
+    </div>
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 text-center">
+      <div class="text-3xl font-bold text-yellow-400">{{ cartoes_amarelos }}</div>
+      <div class="text-gray-500 text-sm mt-1">🟨 Amarelos</div>
+    </div>
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 text-center">
+      <div class="text-3xl font-bold text-red-400">{{ cartoes_vermelhos }}</div>
+      <div class="text-gray-500 text-sm mt-1">🟥 Vermelhos</div>
+    </div>
+  </div>
+
+  {% if ao_vivo %}
+  <div class="mb-8">
+    <h2 class="font-display text-2xl text-red-400 tracking-wider mb-4">🔴 AO VIVO</h2>
+    {% for partida in ao_vivo %}
+    <div class="bg-gray-900 border border-red-500/40 rounded-xl p-5 mb-3 text-center">
+      <div class="font-display text-3xl text-white tracking-widest">
+        {{ partida.time_casa.nome }}
+        <span class="text-green-400 mx-3">{{ partida.gols_casa }} – {{ partida.gols_visitante }}</span>
+        {{ partida.time_visitante.nome }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      <h2 class="font-display text-xl text-green-400 tracking-wider mb-4">🏆 CLASSIFICAÇÃO</h2>
+      {% if classificacao %}
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-gray-500 border-b border-gray-800">
+            <th class="text-left pb-2">#</th>
+            <th class="text-left pb-2">Time</th>
+            <th class="text-center pb-2">J</th>
+            <th class="text-center pb-2">V</th>
+            <th class="text-center pb-2">E</th>
+            <th class="text-center pb-2">D</th>
+            <th class="text-center pb-2 text-green-400">P</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in classificacao %}
+          <tr class="border-b border-gray-800/50 hover:bg-gray-800/30">
+            <td class="py-2 text-gray-500">{{ forloop.counter }}</td>
+            <td class="py-2 font-medium">{{ item.time.nome }}</td>
+            <td class="py-2 text-center text-gray-400">{{ item.jogos }}</td>
+            <td class="py-2 text-center text-green-400">{{ item.vitorias }}</td>
+            <td class="py-2 text-center text-gray-400">{{ item.empates }}</td>
+            <td class="py-2 text-center text-red-400">{{ item.derrotas }}</td>
+            <td class="py-2 text-center font-bold text-white">{{ item.pontos }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-gray-600 text-sm">Nenhuma partida encerrada ainda.</p>
+      {% endif %}
+    </div>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      <h2 class="font-display text-xl text-green-400 tracking-wider mb-4">⚽ ARTILHEIROS</h2>
+      {% if artilheiros %}
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-gray-500 border-b border-gray-800">
+            <th class="text-left pb-2">#</th>
+            <th class="text-left pb-2">Jogador</th>
+            <th class="text-left pb-2">Time</th>
+            <th class="text-center pb-2">⚽</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for jogador in artilheiros %}
+          <tr class="border-b border-gray-800/50 hover:bg-gray-800/30">
+            <td class="py-2 text-gray-500">{{ forloop.counter }}</td>
+            <td class="py-2 font-medium">{{ jogador.nome }}</td>
+            <td class="py-2 text-gray-400">{{ jogador.time.nome }}</td>
+            <td class="py-2 text-center font-bold text-green-400">{{ jogador.gols }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-gray-600 text-sm">Nenhum gol registrado ainda.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
+    <h2 class="font-display text-xl text-green-400 tracking-wider mb-4">📅 ÚLTIMAS PARTIDAS</h2>
+    {% if ultimas_partidas %}
+    {% for partida in ultimas_partidas %}
+    <div class="flex items-center justify-between border-b border-gray-800 py-3 text-sm">
+      <span class="flex-1 text-right text-gray-300">{{ partida.time_casa.nome }}</span>
+      <span class="mx-4 font-display text-lg text-white tracking-widest">
+        {{ partida.gols_casa }} – {{ partida.gols_visitante }}
+      </span>
+      <span class="flex-1 text-left text-gray-300">{{ partida.time_visitante.nome }}</span>
+      <span class="text-gray-600 text-xs ml-4">{{ partida.data|date:"d/m/Y" }}</span>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="text-gray-600 text-sm">Nenhuma partida encerrada ainda.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- ABA: GERENCIAR -->
+<div id="aba-gerenciar" class="hidden space-y-6">
+
+  <!-- Nova Partida -->
+  <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
+    <h2 class="font-display text-xl text-green-400 tracking-wider mb-4">➕ NOVA PARTIDA</h2>
+    <form method="POST" action="{% url 'nova-partida' %}">
+      {% csrf_token %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-gray-400 text-sm mb-1 block">Campeonato</label>
+          <select name="campeonato" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+            {% for c in campeonatos %}
+            <option value="{{ c.pk }}">{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="text-gray-400 text-sm mb-1 block">Data e Hora</label>
+          <input type="datetime-local" name="data" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+        </div>
+        <div>
+          <label class="text-gray-400 text-sm mb-1 block">Time Casa</label>
+          <select name="time_casa" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+            {% for t in todos_times %}
+            <option value="{{ t.pk }}">{{ t.nome }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="text-gray-400 text-sm mb-1 block">Time Visitante</label>
+          <select name="time_visitante" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm">
+            {% for t in todos_times %}
+            <option value="{{ t.pk }}">{{ t.nome }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="mt-4 bg-green-600 hover:bg-green-500 text-white font-medium px-6 py-2 rounded-lg text-sm transition">
+        Criar Partida
+      </button>
+    </form>
+  </div>
+
+  <!-- Gerenciar Partidas Existentes -->
+  <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
+    <h2 class="font-display text-xl text-green-400 tracking-wider mb-4">⚙️ GERENCIAR PARTIDAS</h2>
+    {% if todas_partidas %}
+    {% for partida in todas_partidas %}
+    <div class="border border-gray-800 rounded-xl p-4 mb-4">
+
+      <!-- Cabeçalho da partida -->
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-medium text-white">
+          {{ partida.time_casa.nome }} x {{ partida.time_visitante.nome }}
+        </span>
+        <span class="text-xs px-2 py-1 rounded-full
+          {% if partida.status == 'AO' %}bg-red-500/20 text-red-400
+          {% elif partida.status == 'EN' %}bg-gray-700 text-gray-400
+          {% else %}bg-yellow-500/20 text-yellow-400{% endif %}">
+          {{ partida.get_status_display }}
+        </span>
+      </div>
+
+      <!-- Alterar Status -->
+      <form method="POST" action="{% url 'alterar-status' partida.pk %}" class="flex gap-2 mb-3">
+        {% csrf_token %}
+        <select name="status" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm">
+          <option value="AG" {% if partida.status == 'AG' %}selected{% endif %}>Aguardando</option>
+          <option value="AO" {% if partida.status == 'AO' %}selected{% endif %}>Ao Vivo</option>
+          <option value="EN" {% if partida.status == 'EN' %}selected{% endif %}>Encerrada</option>
+        </select>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-sm transition">
+          Alterar Status
+        </button>
+      </form>
+
+      <!-- Registrar Evento -->
+      <form method="POST" action="{% url 'registrar-evento' partida.pk %}" class="grid grid-cols-2 md:grid-cols-4 gap-2">
+        {% csrf_token %}
+        <select name="tipo" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm">
+          <option value="GOL">⚽ Gol</option>
+          <option value="CAR">🟨 Cartão Amarelo</option>
+          <option value="VER">🟥 Cartão Vermelho</option>
+          <option value="SUB">🔄 Substituição</option>
+        </select>
+        <select name="jogador" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm">
+          <option value="">— Jogador —</option>
+          {% for j in todos_jogadores %}
+          <option value="{{ j.pk }}">{{ j.nome }} ({{ j.time.nome }})</option>
+          {% endfor %}
+        </select>
+        <input type="number" name="minuto" placeholder="Minuto" min="1" max="120"
+          class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm">
+        <input type="text" name="descricao" placeholder="Descrição"
+          class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm">
+        <button type="submit" class="md:col-span-4 bg-green-600 hover:bg-green-500 text-white px-4 py-1.5 rounded-lg text-sm transition">
+          Registrar Evento
+        </button>
+      </form>
+
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="text-gray-600 text-sm">Nenhuma partida cadastrada ainda.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- Script das abas -->
+<script>
+  function trocarAba(aba) {
+    document.getElementById('aba-visao').classList.add('hidden');
+    document.getElementById('aba-gerenciar').classList.add('hidden');
+    document.getElementById('btn-visao').classList.remove('border-green-400', 'text-green-400');
+    document.getElementById('btn-visao').classList.add('border-transparent', 'text-gray-500');
+    document.getElementById('btn-gerenciar').classList.remove('border-green-400', 'text-green-400');
+    document.getElementById('btn-gerenciar').classList.add('border-transparent', 'text-gray-500');
+
+    document.getElementById('aba-' + aba).classList.remove('hidden');
+    document.getElementById('btn-' + aba).classList.add('border-green-400', 'text-green-400');
+    document.getElementById('btn-' + aba).classList.remove('border-transparent', 'text-gray-500');
+  }
+
+  // Abre aba correta se vier da URL com ?aba=gerenciar
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('aba') === 'gerenciar') trocarAba('gerenciar');
+</script>
+
+{% endblock %}

@@ -9,6 +9,7 @@ class Time(models.Model):
     estadio= models.CharField(max_length=100)
     tecnico= models.CharField(max_length=100)
     data_fundacao= models.DateField()
+    escudo = models.ImageField(upload_to='escudos/', null=True, blank=True)
 
     def __str__(self):
         return self.nome
