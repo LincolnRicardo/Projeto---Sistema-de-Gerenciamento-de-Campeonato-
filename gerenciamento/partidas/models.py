@@ -17,7 +17,7 @@ class Partida(models.Model):
     gols_visitante = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.time_casa} x {self.time_visitante}"
+        return f"{self.time_casa} x {self.time_visitante}" #mostando os times da partida
 
 
 class Evento(models.Model):
@@ -35,7 +35,7 @@ class Evento(models.Model):
     jogador = models.ForeignKey('jogadores.Jogador', on_delete=models.SET_NULL, null=True, blank=True, related_name='eventos')
 
     class Meta:
-        ordering = ['minuto']
+        ordering = ['minuto'] #utilizei para ficar em ordem cronologica cada evento do jogo
 
     def __str__(self):
-        return f"{self.get_tipo_display()} - {self.minuto}' ({self.partida})"
+        return f"{self.get_tipo_display()} - {self.minuto}' ({self.partida})"  #mostando o que aconteceu no jogo, minutos e qual partida
