@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes da Partida{% endblock %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto">
+
+    <a href="{% url 'dashboard' %}"
+       class="text-green-400 hover:text-green-300">
+       ← Voltar ao Dashboard
+    </a>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 mt-4">
+
+        <h1 class="font-display text-3xl text-green-400 mb-2">
+            {{ partida.time_casa.nome }}
+            {{ partida.gols_casa }}
+            x
+            {{ partida.gols_visitante }}
+            {{ partida.time_visitante.nome }}
+        </h1>
+
+        <p class="text-gray-500 mb-6">
+            {{ partida.data|date:"d/m/Y H:i" }}
+        </p>
+
+        <h2 class="text-xl text-white mb-4">
+            ⚽ Eventos da Partida
+        </h2>
+
+        {% for evento in eventos %}
+        <div class="border-b border-gray-800 py-3 flex justify-between">
+
+            <div>
+                <span class="text-green-400 font-bold">
+                    {{ evento.minuto }}'
+                </span>
+
+                <span class="ml-2">
+                    {{ evento.get_tipo_display }}
+                </span>
+
+                {% if evento.jogador %}
+                    <span class="font-semibold text-white">
+                        {{ evento.jogador.nome }}
+                    </span>
+                {% endif %}
+
+                {% if evento.descricao %}
+                    <span class="text-gray-400">
+                        - {{ evento.descricao }}
+                    </span>
+                {% endif %}
+            </div>
+
+        </div>
+        {% empty %}
+        <p class="text-gray-500">
+            Nenhum evento registrado para esta partida.
+        </p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

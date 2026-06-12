@@ -22,12 +22,15 @@
     class="aba-btn px-5 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-white transition">
     ⚙️ Gerenciar
   </button>
+  <button onclick="trocarAba('times')" id="btn-times"
+    class="aba-btn px-5 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-white transition">
+    🏟️ Times
+  </button>
 </div>
 
 <!-- ABA: VISÃO GERAL -->
 <div id="aba-visao">
 
-  <!-- Cards -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
     <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 text-center">
       <div class="text-3xl font-bold text-green-400">{{ total_gols }}</div>
@@ -129,8 +132,9 @@
   <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
     <h2 class="font-display text-xl text-green-400 tracking-wider mb-4">📅 ÚLTIMAS PARTIDAS</h2>
     {% if ultimas_partidas %}
-    {% for partida in ultimas_partidas %}
-    <div class="flex items-center justify-between border-b border-gray-800 py-3 text-sm">
+  {% for partida in ultimas_partidas %}
+    <a href="{% url 'detalhe-partida' partida.pk %}">
+    <div class="flex items-center justify-between border-b border-gray-800 py-3 text-sm hover:bg-gray-800/40 cursor-pointer">
       <span class="flex-1 text-right text-gray-300">{{ partida.time_casa.nome }}</span>
       <span class="mx-4 font-display text-lg text-white tracking-widest">
         {{ partida.gols_casa }} – {{ partida.gols_visitante }}
@@ -138,6 +142,7 @@
       <span class="flex-1 text-left text-gray-300">{{ partida.time_visitante.nome }}</span>
       <span class="text-gray-600 text-xs ml-4">{{ partida.data|date:"d/m/Y" }}</span>
     </div>
+    </a>
     {% endfor %}
     {% else %}
     <p class="text-gray-600 text-sm">Nenhuma partida encerrada ainda.</p>
@@ -149,7 +154,6 @@
 <!-- ABA: GERENCIAR -->
 <div id="aba-gerenciar" class="hidden space-y-6">
 
-  <!-- Nova Partida -->
   <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
     <h2 class="font-display text-xl text-green-400 tracking-wider mb-4">➕ NOVA PARTIDA</h2>
     <form method="POST" action="{% url 'nova-partida' %}">
@@ -190,14 +194,11 @@
     </form>
   </div>
 
-  <!-- Gerenciar Partidas Existentes -->
   <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
     <h2 class="font-display text-xl text-green-400 tracking-wider mb-4">⚙️ GERENCIAR PARTIDAS</h2>
     {% if todas_partidas %}
     {% for partida in todas_partidas %}
     <div class="border border-gray-800 rounded-xl p-4 mb-4">
-
-      <!-- Cabeçalho da partida -->
       <div class="flex items-center justify-between mb-3">
         <span class="font-medium text-white">
           {{ partida.time_casa.nome }} x {{ partida.time_visitante.nome }}
@@ -209,8 +210,6 @@
           {{ partida.get_status_display }}
         </span>
       </div>
-
-      <!-- Alterar Status -->
       <form method="POST" action="{% url 'alterar-status' partida.pk %}" class="flex gap-2 mb-3">
         {% csrf_token %}
         <select name="status" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm">
@@ -222,8 +221,6 @@
           Alterar Status
         </button>
       </form>
-
-      <!-- Registrar Evento -->
       <form method="POST" action="{% url 'registrar-evento' partida.pk %}" class="grid grid-cols-2 md:grid-cols-4 gap-2">
         {% csrf_token %}
         <select name="tipo" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm">
@@ -246,7 +243,6 @@
           Registrar Evento
         </button>
       </form>
-
     </div>
     {% endfor %}
     {% else %}
@@ -256,24 +252,55 @@
 
 </div>
 
-<!-- Script das abas -->
+<!-- ABA: TIMES -->
+<div id="aba-times" class="hidden">
+
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="font-display text-2xl text-green-400 tracking-wider">🏟️ TIMES</h2>
+    <a href="{% url 'time-criar' %}"
+      class="bg-green-600 hover:bg-green-500 text-white font-medium px-5 py-2 rounded-lg text-sm transition">
+      ➕ Adicionar Time
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% for time in todos_times %}
+    <a href="{% url 'time-detalhe' time.pk %}">
+      <div class="bg-gray-900 border border-gray-800 hover:border-green-500/50 rounded-xl p-6 transition cursor-pointer">
+        {% if time.escudo %}
+          <img src="{{ time.escudo.url }}" class="w-14 h-14 rounded-full object-cover mb-3">
+        {% else %}
+          <span class="font-display text-2xl text-green-400 mb-3 block">{{ time.nome|slice:":1" }}</span>
+        {% endif %}
+        <div class="space-y-2 text-sm mt-2">
+          <div class="flex items-center gap-2 text-gray-400"><span>📍</span><span>{{ time.cidade }}</span></div>
+          <div class="flex items-center gap-2 text-gray-400"><span>🏟️</span><span>{{ time.estadio }}</span></div>
+          <div class="flex items-center gap-2 text-gray-400"><span>👤</span><span>{{ time.tecnico }}</span></div>
+        </div>
+      </div>
+    </a>
+    {% empty %}
+    <p class="text-gray-500">Nenhum time cadastrado ainda.</p>
+    {% endfor %}
+  </div>
+
+</div>
+
 <script>
   function trocarAba(aba) {
-    document.getElementById('aba-visao').classList.add('hidden');
-    document.getElementById('aba-gerenciar').classList.add('hidden');
-    document.getElementById('btn-visao').classList.remove('border-green-400', 'text-green-400');
-    document.getElementById('btn-visao').classList.add('border-transparent', 'text-gray-500');
-    document.getElementById('btn-gerenciar').classList.remove('border-green-400', 'text-green-400');
-    document.getElementById('btn-gerenciar').classList.add('border-transparent', 'text-gray-500');
-
+    ['visao', 'gerenciar', 'times'].forEach(a => {
+      document.getElementById('aba-' + a).classList.add('hidden');
+      document.getElementById('btn-' + a).classList.remove('border-green-400', 'text-green-400');
+      document.getElementById('btn-' + a).classList.add('border-transparent', 'text-gray-500');
+    });
     document.getElementById('aba-' + aba).classList.remove('hidden');
     document.getElementById('btn-' + aba).classList.add('border-green-400', 'text-green-400');
     document.getElementById('btn-' + aba).classList.remove('border-transparent', 'text-gray-500');
   }
 
-  // Abre aba correta se vier da URL com ?aba=gerenciar
   const params = new URLSearchParams(window.location.search);
   if (params.get('aba') === 'gerenciar') trocarAba('gerenciar');
+  else if (params.get('aba') === 'times') trocarAba('times');
 </script>
 
 {% endblock %}

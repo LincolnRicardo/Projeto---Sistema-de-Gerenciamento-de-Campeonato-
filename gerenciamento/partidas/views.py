@@ -47,8 +47,8 @@ def dashboard(request):
         ).count()
         jogos = vitorias + empates + derrotas
         pontos = (vitorias * 3) + empates
-        if jogos > 0:
-            classificacao.append({
+        
+        classificacao.append({
                 'time': time,
                 'jogos': jogos,
                 'vitorias': vitorias,
@@ -109,6 +109,18 @@ def alterar_status(request, partida_id):
         messages.success(request, 'Status atualizado!')
     return redirect('/?aba=gerenciar')
 
+
+def detalhe_partida(request, pk):
+    partida = get_object_or_404(Partida, pk=pk)
+
+    return render(
+        request,
+        'detalhe_partida.html',
+        {
+            'partida': partida,
+            'eventos': partida.eventos.all()
+        }
+    )
 
 def registrar_evento(request, partida_id):
     if request.method == 'POST':
